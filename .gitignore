@@ -1,7 +1,12 @@
+# custom
+tester*
+*.Rproj
+*.pdf
 # History files
 .Rhistory
 .Rapp.history
-
+*.o
+*.so
 # Session Data files
 .RData
 .RDataTmp

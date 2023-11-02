@@ -1,0 +1,1338 @@
+---
+title: "Project-Oriented Coding "
+subtitle: "SAFS OARS Learning Session"
+author: "Dan Ovando"
+email: danovan@uw.edu
+institute: "University of Washington"
+date: "2020/4/5"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: dark
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+
+style_mono_accent(base_color = "#43418A")
+```
+
+```{r include = FALSE}
+library(here)
+library(xaringan)
+library(TMB)
+library(tufte)
+library(janitor)
+library(dplyr)
+library(ggplot2)
+library(rstan)
+library(sraplus)
+library(bookdown)
+library(xaringanExtra)
+library(xaringanthemer)
+```
+```{r share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+```
+```{r broadcast, echo=FALSE}
+xaringanExtra::use_broadcast()
+```
+
+# OARS Learning Sessions
+
+The goal as I see it: 
+
+.center[*A welcoming space to share and learn about  tools for creating <br> Open and Reproducible Science*]
+
+- Inspired by UCSB's [eco-data-science](https://eco-data-science.github.io/) community
+
+- Monthly(?) meetings led by volunteers looking to share something they learned
+  - You don't have to be an expert! Just one day ahead of the average participant
+  - Teaching is a great way to learn... 
+
+- Thanks to the OARS team, in particular Helena McMonagle, for helping get this going
+
+Communication: Slack? Listserve? Will send email poll shortly
+
+---
+
+# We Have a Problem
+
+.center[
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/zwRdO9_GGhY?start=694" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+]
+
+---
+
+# We Have a Problem
+
+.center[
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zwRdO9_GGhY?start=2024" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+]
+
+---
+
+
+# Today's Content
+
+.pull-left[
+
+- Project Oriented Workflows
+
+- What is Git?
+
+- What is GitHub?
+
+- Using project-oriented workflows with GitHub
+
+
+].pull-right[
+
+```{r, echo = FALSE, out.width="80%"}
+knitr::include_graphics("https://journals.plos.org/plosbiology/article/figure/image?size=large&id=10.1371/journal.pbio.3000763.g003")
+```
+
+]
+
+---
+
+# Today's Content
+
+The goal of this workshop isn't to turn you into Git experts in 1 hour. 
+
+It's to show you that 
+
+1. This stuff isn't that hard
+
+2. This stuff can make your life easier
+
+3. This stuff can make your science better
+
+---
+
+
+class: center, inverse, middle
+
+
+
+class: center, middle, inverse
+# Science is all about reproducibility! 
+# Why should it stop at our code?
+
+???
+Most of us trained in things like field methods: I've had way more classes in transect methods than coding practices.
+
+Leads to methods that describe the brand of PVC pipe used but depend on a pile of code that will only work on the users computer for the week they submitted the paper, and never again
+
+we put all this work into getting the data, and then drop the ball at the step that turns all that hard work into insight. 
+
+As code becomes our primary tool, need to apply the same reprodicibility rigorous to our code that we're used to applying in our field methods
+---
+
+
+class: center, middle, inverse
+
+# the point of all of this is to make your life easier
+
+---
+
+
+# Brown M&Ms and Code
+
+.pull-left[
+
+Van Halen required a bowl of M&Ms backstage at every show, but with all the brown M&Ms removed or they wouldn't perform
+
+- Presence of brown M&Ms was a sign that bigger safety details might have been missed too<sup>1</sup>
+
+Some of the "best practices" coding things we'll talk about can seem just as silly:
+
+*Poor coding practices can be a sign of bigger problems*
+
+.footnote[
+[1] So they claim, might have just been being annoying
+]
+
+] .pull-right[
+
+```{r}
+knitr::include_graphics("https://media.giphy.com/media/l4pTfrh1ElNzclZU4/giphy.gif")
+```
+```{r, out.width="25%"}
+knitr::include_graphics("https://i1.wp.com/www.economycandy.com/wp-content/uploads/2019/07/products-MMs-Brown-1.jpg?fit=709%2C709&ssl=1")
+
+```
+
+
+]
+
+
+---
+
+
+
+# Does This Look Familiar?
+
+```{r, echo = FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+
+---
+
+# Does This Look Familiar?
+
+.pull-left[
+
+- Multiple different projects in one folder
+- No subfolder organization
+- Stored in Google Drive
+- Version control via file naming
+- Manually modified data
+- Results saved as .xlsx and manually versioned by name
+
+
+].pull-right[
+
+```{r, echo = FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+]
+
+---
+
+# What's Wrong With this?
+
+.pull-left[
+
+- Nothing if it's for your personal stuff!
+
+- Version control via file naming is not stable
+  - "ohhh, you used v5? Sorry the correct one is v2.3-FINAL
+  - No connection between state of code that generated results and results
+- No clear organization for other users to follow
+- **Google Drive / whatever and Git/GitHub don't play nice together**
+
+
+].pull-right[
+
+```{r, echo = FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+]
+
+---
+
+# The Solution: [Project-Oriented Workflows](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/)
+
+>This convention guarantees that the project can be moved around on your computer or onto other computers and will still “just work” `r tufte::quote_footer('--- Jenny Bryan')`
+
+- All files needed to run your analysis in one folder
+  - Nested subfolders as needed
+  - **Does not have to be RStudio**
+
+- All analysis written assuming
+  - Fresh state
+  - Working directory set to project directory
+---
+
+# The Solution: Project-Oriented Workflows
+.pull-left[see [Good Enough Practices in Scientific Computing](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510)]
+.pull-right[
+```{r, echo=FALSE}
+knitr::include_graphics("https://github.com/super-advanced-r-fall-2019/intro/raw/master/imgs/good-enough.png")
+```
+]
+
+ 
+---
+
+
+# Project Oriented Workflow
+
+```{r, echo = FALSE}
+knitr::include_graphics(knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/better.png"))
+
+```
+
+---
+
+# Purge `setwd` from your scripts
+
+> *If the first line of your R script is*
+  
+>  setwd("C:\Users\jenny\path\that\only\I\have")
+  
+>  *I will come into your office and SET YOUR COMPUTER ON FIRE* 🔥.
+  
+ > *If the first line of your R script is*
+  
+>  rm(list = ls())
+  
+>  *I will come into your office and SET YOUR COMPUTER ON FIRE* 🔥.
+`r tufte::quote_footer('--- Jenny Bryan')`
+ 
+
+---
+
+
+# What's wrong with `setwd`?
+
+.pull-left[
+### Workflow
+
+*Personal decisions*
+
+* Choice of IDE (RStudio, Sublime Text, scanning handwritten notes)
+
+* CaMel or snake_case
+  - But seriously, snake_case
+  - See [tidyverse style guide](https://style.tidyverse.org/)
+
+* Your lucky coding socks
+
+* **Where the code lives**
+]
+.pull-right[
+
+### Product
+
+*What the analysis needs*
+
+* The data
+
+* Packages
+
+* Package versions
+
+* Custom functions
+
+* Scripts  to tie it all together
+
+]
+
+---
+
+## Alternatives to `setwd`
+
+Using RStudio is a simple way around this
+  
+  - Creates .Rproj file in the root directory of your project
+
+Alternatively...
+ 
+  - Often just open a file in the project directory with R GUI/Atom/Whatever
+  
+  - If that fails, use `cd` / `setwd` from the command line/console (not in your script) when you open your analysis
+  
+
+Using project-oriented workflow means that once you're in the working directory, everything else should work
+
+
+**It's the user's, not the code's, responsibility to make sure the working directory is set correctly** $^1$
+
+.footnote[
+[1] But do what works best for your workflow
+]
+
+---
+
+# Exorcise the paths
+
+OK, you've created a project oriented workflow
+
+Is this OK now?
+
+`my_data <- read.csv("data\hake.csv")`
+
+--
+- Platform dependent
+
+- Presents some problems for R Markdown
+
+```{r}
+getwd()
+```
+
+---
+
+
+# File Paths with `here`
+
+[`here`](https://github.com/jennybc/here_here) is a great little package for managing file paths
+  - Basically file.path with a bit of sugar
+  
+  
+```{r}
+here::dr_here()
+```
+
+
+`here` has a bunch of heuristics to figure out what the root of the project should be, and builds intelligent paths based on that
+
+```{r}
+here::here("data","hake.csv")
+```
+
+Looks for...
+  - An RStudio project
+  - a .git file
+  - a .here file
+  - etc.
+
+---
+
+# File Paths with `here`
+Works on some machines...
+```{r, error=TRUE, echo = TRUE}
+
+hake <- read.csv("data\hake.csv")
+
+```
+
+Works in the markdown but won't work in the command line
+```{r, error = TRUE, echo = TRUE}
+hake <- read.csv("../data/hake.csv")
+```
+
+Works on any platform and from anywhere in the project!
+```{r, echo = TRUE}
+hake <- read.csv(here("data","hake.csv"))
+```
+
+What about this?
+
+```{r, error = TRUE, echo = TRUE}
+hake <- read.csv(here("home-folder","Place-With_Data","hake.csv"))
+```
+
+
+---
+
+# Project Oriented Workflows
+
+The Ideal: 
+
+.center[*Any user should be able to reproduce the project on any computer with only the materials in the project folder, without changing any code*]
+
+
+Obviously easier said than done, but this is what we're aiming for. 
+
+Now we'll see how Git + GitHub can help make this happen
+
+---
+
+
+# Git and GitHub are Great
+
+.pull-left[
+
+- Provides a clear and consistent way to version your results
+
+- Allow others to easily reproduce your results
+
+- Enables efficient and safe collaboration
+
+- Gives you a time machine for your results
+
+
+We'll try and demystify it a bit today
+
+*Git Materials largely drawn with permission from Lee Qi's excellent intro available [here](https://github.com/super-advanced-r-fall-2019/git-and-github)*
+  
+
+
+].pull-right[
+
+```{r out.width = '100%', echo = FALSE}
+knitr::include_graphics("http://swcarpentry.github.io/git-novice/fig/phd101212s.png") 
+```
+]
+
+
+---
+
+# What is Git?
+
+Git is to GitHub what R is to RStudio
+
+
+Git was originally developed by Linus Torvalds for development of the Linux kernel
+  - Hence, interacting with Git only via the command line and the help files can feel... [confusing](https://git-man-page-generator.lokaltog.net/#Zml4JCRmaWxl)
+  
+Git is a software package for tracking changes in files in an organized way.  
+  - Create snapshots of the code at specific moments in time via "commits"
+  - Use commits to merge together different versions of the same code / resolve conflicts
+  - Allow for development across multiple "branches" of a project
+  - And lots of other fun stuff
+  
+  
+
+
+---
+
+
+.pull-left[
+# Git
+
+```{r out.width = '50%', echo = FALSE}
+knitr::include_graphics("https://git-scm.com/images/logo@2x.png") 
+```
+
+1. Local version control
+
+1. From the command line or used with third party GUIs
+
+1. Self-contained records of code
+]
+
+.pull-right[
+# GitHub
+
+```{r out.width = '20%', echo = FALSE}
+knitr::include_graphics("https://logos-download.com/wp-content/uploads/2016/09/GitHub_logo.png") 
+```
+
+1. Cloud-based hosting platform
+
+1. Intuitive graphical web user interface
+
+1. Designed for sharing and collaboration
+]
+
+---
+## Why use
+
+.pull-left[
+
+```{r out.width = '50%', echo = FALSE}
+# url
+knitr::include_graphics("https://git-scm.com/images/logo@2x.png") 
+```
+
+Keep track of your code over time
+
+Go back to older versions of your repository
+
+Branch to develop and test new features
+]
+--
+
+.pull-right[
+
+```{r out.width = '20%', echo = FALSE}
+knitr::include_graphics("https://logos-download.com/wp-content/uploads/2016/09/GitHub_logo.png") 
+```
+
+Store your repository with its associated version history in the cloud
+
+All kinds of project management helpers
+
+Collaborate!
+]
+
+---
+
+# Ways to Git
+
+All Git commands can be executed in the command line- Command Prompt, Terminal.
+
+There are also many different user interfaces for managing Git repositories.
+
+- Dan's favourite: [GitKraken](https://www.gitkraken.com/)
+
+
+- From the makers of Sublime Text: [SublimeMerge](https://www.sublimemerge.com/)
+
+
+- From the developers of Github: [Github Desktop](https://desktop.github.com/)
+
+- [RStudio](https://rstudio.com/)
+
+.center[
+```{r out.width = '15%'}
+knitr::include_graphics("https://www.gitkraken.com/downloads/brand-assets/gitkraken-logo-light-sq.png")
+```
+```{r out.width = '15%'}
+knitr::include_graphics("https://img.stackshare.io/service/9564/sublimemerge.png")
+```
+```{r out.width = '18%'}
+knitr::include_graphics("https://desktop.github.com/images/desktop-icon.svg")
+```
+```{r out.width = '30%'}
+knitr::include_graphics("https://rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png")
+```
+]
+
+---
+
+# The **BASICS** of Git
+
+Goal here isn't to teach Git in one hour, just to familiarize you with the concepts so you can start / improve your journey
+
+See 
+
+[Happy Git and Github for the useR](https://happygitwithr.com/)
+
+[Oh Sh*t, Git!](https://ohshitgit.com/) 
+  
+  * [Dangit, Git!](https://dangitgit.com/) if you're so inclined
+
+[Oh My Git! (a Git learning game!)](https://blinry.itch.io/oh-my-git)
+
+[git documentation itself isn't bad](https://git-scm.com/docs/)
+
+
+---
+
+# The **BASICS** of Git
+
+Thankfully for most scientific collaboration across small-ish groups you usually don't need the complicated stuff
+
+95% of my worflow uses variants of
+- `commit`
+- `pull`
+- `push`
+- `branch`
+- `reset`
+
+The rest of the stuff is there for when Sh*t hits the fan or for managing really complex projects
+
+---
+
+# Getting Started
+
+This is sort of a thing unto itself, and probably at least "half the battle"
+
+From Jenny Bryan's amazing [Happy Git and Github ](https://happygitwithr.com/install-intro.html#install-intro)
+
+> You will find far more resources for how to use Git than for installation and configuration. Why? The experts …
+
+>    
+  - Have been doing this for years. It’s simply not hard for them anymore.
+  - Probably use some flavor of Unix. They may secretly (or not so secretly) take pride in neither using nor knowing Windows.
+  - Get more satisfaction and reward for thinking and writing about Git concepts and workflows than Git installation.
+
+
+To follow in the illustrious footprints of instructions assuming you can install it and set it up yourself...
+
+We don't have time to solve this today, so see those resources. From here on I will assume you have successfully installed and set up git!
+
+---
+
+
+# Manual Git Setup
+
+Chances are if you're doing it this way you don't need my help. 
+
+1. Create a new project using project-oriented workflow
+
+2. Set working directory to the root directory of your project by **any means other than hard coding in a script**
+
+3. Open up a command line... 
+  - From RStudio: click on "Terminal" tab
+  - Windows users: type "cmd" into your search bar
+  - Mac users: type "terminal" into Spotlight
+  - Linux users: you probably should know how to do this already
+
+4. Initialize git repository from terminal by entering `git init`
+
+This will set up your project to be tracked with Git, including by default all files starting in your working directory and in any nested folders from there
+---
+
+
+# Switching to GitHub
+
+This is often where people get stuck picking up Git. 
+
+You thought you were getting a handy tool to make your science better...
+
+And I'm telling you to interact via the terminal with the same thing they use to manage the Linux kernel.. 
+
+
+```{r out.width = '25%', fig.align='center'}
+knitr::include_graphics("https://media.giphy.com/media/51Uiuy5QBZNkoF3b2Z/giphy.gif")
+```
+
+---
+
+
+# Enter GitHub + Some Git GUI
+
+The good news: Using GitHub along with some Git-enabled GUI like RStudio makes life *much easier*, particularly to get started. 
+
+So I'm going to try and hook you with those features. 
+  - Doesn't mean learning the more "command line" version of Git isn't important and helpful, but I find it easier to learn that after getting exposed to the more "interactive" style
+  
+The "GitHub first" worflow
+
+Assuming you have succesfully set up Git on your computer... 
+
+1. Create and log in to an account at GitHub.com
+
+2. Create a repository on GitHub
+
+3. Clone to your computer
+
+4. Open project with your IDE of choice, assumed here to be RStudio
+
+
+---
+
+# Creating a Repository
+
+There are lots of great resources for this....
+
+See [here](https://docs.github.com/en/github/getting-started-with-github/create-a-repo)
+
+And Mark Scheuerell's excellent intro [here](https://fish497.github.io/website/lectures/week_02/lec_04_intro_github.html)
+
+And I'll walk through this in class rather than taking a bunch of screenshots... 
+
+Some tips
+
+
+1. When given the option, select "add .gitignore" and assuming you're primarily working in R, select the R template (or whatever your main langauge is).
+  - This will tell Git to ignore certain commonly ignored filetypes 
+  
+2. Select "choose a license" to have GitHub automatically create a software license for your project. I often choose the Mozilla license, the MIT is also popular. 
+
+---
+
+class: center, middle, inverse
+
+# Exercies: Create a new repository on GitHub with a .gitignore file
+
+---
+
+
+# Coming Down from the Cloud
+
+OK, you've created a repository on GitHub! Now how do you use it?
+
+1. Navigate to the repository on GitHub
+
+2. Click on the "Code" tab and select your mode 
+  - HTML is by far the easiest, but it's worth setting up SSH if going to do this a lot, see [here](https://happygitwithr.com/ssh-keys.html)
+  
+3. Easiest option: On your computer, open RStudio
+  - Click on File > New Project > Version Control > Git
+  - Paste the link from GitHub into the "Repository URL" and fill out the rest of the links
+
+And *voilà*, you have a new project on your computer initialized with git and a .gitignore file (we'll come back to that)
+---
+
+
+
+
+# From here
+
+Given the amount of resources out there for this, I'm not going to provide step-by-step instructions for an entire Git & Github lifestyle here.
+
+Instead Mark Scheuerell and I are going to walk through some common collaboration examples
+
+Think of this as a demo of the usefulness of Git + GitHub for scientific work, and a way to familiarize yourself with core concepts to then practice on your own. 
+
+---
+
+class: center, middle, inverse
+# Exercise:
+## Create a repo on GitHub and clone it to your computer
+## Bonus: Invite a collaborator to your repo
+
+---
+
+
+# `git commit -m "it all starts here"`
+
+OK, you've *finally* gotten to the point where you can actually track some code! 
+
+`git commit` is the workhorse of it all.
+
+Think of commit like "Save, and yes I really mean it". 
+
+You can of course save your code as you go along. But once you get your code to an important breakpoint, you want to then "commit" those saved changes
+
+  - The first version of your code the works top to bottom
+  - When you fix that bug you found
+  - When you add that new feature
+  
+---
+
+# `git commit -m "it all starts here"`
+
+When you "commit", git takes a snapshot of all the files it is charged with tracking in your repository, gives it a timestamp and a unique identifier paired with your commit message. 
+
+
+Don't be afraid to commit often and early!
+
+  - "Added one comment to code" is probably too often
+  - "Started and finished dissertation' is too broad
+  - "First working version of the movement function" is a nice medium
+---
+
+# What Should you Commit?
+
+OK that sounds great, what should you actually use Git to keep track of though? By defult Git tracks *everything*. 
+
+This isn't a good idea for a few reasons... 
+  - Don't want to clutter up the repo with unneeded things
+  - Commiting results can break link between code and outcomes
+  - Git isn't meant to store your global database: avoid commiting data over tens of megabytes
+
+My rule of thumb: *track all things that are needed to reproduce your results, and as little of anything else as possible*
+  - e.g. I ignore .Rproj files: It assumes RStudio which isn't universal, and can conflict if different users store the project in differently named folders
+
+
+---
+
+# Sometimes Ignorance is Best
+
+.pull-left[
+
+A .gitignore files tells Git what *not* to track
+
+For reasons I don't know it is a hidden file by default: you won't see it if you navigate to your folder in say Finder, but will see it in RStudio
+
+You can get very creative with the .gitignore file
+  - ignore entire folders
+  - Ignore everything *except* something with `!`
+  - Ignore files that contain a specific text string
+  - Ignore particular file types
+
+].pull-right[
+```
+# results
+# ignore results folder
+# why is this a good(ish) idea?
+results/ 
+settings.txt
+packageDescription.txt
+# you can use regular expressions in a 
+# .gitignore file:
+# ignore all with with "VAST_"
+VAST_*
+sraplus_tmb*
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+*.RData
+*.Rdata
+*.rds
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+```
+]
+
+
+
+---
+
+# What about Data?
+
+We're scientists! On a good day, our results depend on data. 
+
+When your data are small (~<100MB), GitHub can be a fine way to store data. Not technically the "right" way but works just fine
+  - Just be sure to load it with principles of project-oriented coding, not with "~/My Computer/Dropbox/PhD Data/data.csv"
+
+But what if your data are massive / you use the same data over many different projects? 
+
+  - Time to move to a database..
+
+Ideally, store data in the cloud somewhere, and then have your code download the data as needed. Lots of options for this
+  - Dryad
+  - zenodo
+  - Dropbox / google drive!
+
+---
+
+class: center, middle, inverse
+# Exercise:
+## Make some changes and stage and then commit them
+
+
+---
+
+# `commit` > `pull` > `push`
+
+OK, you have a committed change to your code, which is linked up to GitHub!
+
+Now you want to sync up your local changes with the version on GitHub
+
+1. `commit` 
+
+  - You already did that
+  
+2. `pull`
+  - `pull` "pulls" the version of the code currently on GitHub down to your computer
+  - Any new changes to the code on GitHub that don't affect any of your changes are simply incorporated into your code 
+      - e.g. if someone created and pushed a new script while you were working
+  - This creates an "up to date" version of the code that incorporates the latest version on GitHub with your newly committed changes
+
+3. `push` pushes this newly merged version of your code back to GitHub
+
+
+---
+
+
+# `commit` > `pull` > `push`
+
+Why is this order important?
+
+- If you have uncommitted changes that would be affected by the version of Github and you `pull` before you `commit`, you'll get an error like this
+
+`
+error: Your local changes to the following files 
+would be overwritten by merge:
+	presentations/projects-with-github.Rmd
+Please commit your changes or stash them before you merge.
+Aborting
+`
+
+
+
+---
+
+# `commit` > `pull` > `push`
+
+What about  `commit` > `push` > `pull`?
+
+Suppose that you made and committed some changes to the main branch, but while you were doing that someone else made some different changes to the main branch, and already commited and pushed them. 
+
+You'll see a (helpful!) error like this
+
+`
+error: failed to push some refs to 'https://github.com/YOU/REPO.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+`
+
+This is Git telling you that there would be conflicts created by pushing your changes to GitHub, and it won't let you do it. 
+
+
+---
+
+# `commit` > `pull` > `push`
+
+You might also see this...
+
+`Your branch is ahead of 'origin/master' by 2 commits` or something like that, or
+
+`Your push has been rejected`...
+
+These are all symptoms of using `commit` > `push` instead of `commit` > `pull` > `push`: 
+
+Git is telling you that there are some tricky differences between the code on your computer and the version on GitHub
+
+All generally solved by `commit` > `pull` > `push`<sup>1</sup>
+
+.footnote[[1] Technically when there are remote things to be merged `git pull --rebase` makes a cleaner history but is trickier to use, for beginners plain old `pull` works fine]
+---
+
+class: center, middle, inverse
+# Exercise:
+## Make some changes and commit them then pull then push!
+
+
+---
+
+
+# Dealing with Merge Conflicts
+
+
+OK, you've run `commit` > `pull` > `push`! 
+
+For most of your day-today Git needs, this will Just Work
+
+But eventually, you will get the dreaded... 
+
+`
+Auto-merging presentations/projects-with-github.Rmd
+CONFLICT (content): Merge conflict in presentations/projects-with-github.Rmd
+Automatic merge failed; fix conflicts and then commit the result.
+`
+
+This looks scary but perfectly normal and healthy!
+
+This just means that there is a difference between your local version and the GitHub version that Git doesn't know how to automatically deal with
+
+
+```{r, echo = FALSE, fig.align="center"}
+knitr::include_graphics("https://media.giphy.com/media/oey8cN3A3yNdS/giphy.gif")
+
+```
+
+
+---
+
+# Merge Conflicts
+.pull-left[
+Look like this
+
+
+```
+<<<<<<< HEAD:my-file.R
+
+a <- 2 + 2
+
+
+=======
+
+a <- 2 + 3
+
+>>>>>>> issue-5:my-file.R
+```
+
+
+] .pull-right[
+From [happygitwithr](https://happygitwithr.com/git-branches.html)
+
+In this conflict, the lines between `<<<<<< HEAD:my-file.R` and `======` is your local version and between `=======` and `>>>>>>>` issue-5:my-file.R are the conflicting changes on GitHub
+
+To resolve the conflict, edit this section until it reflects the state you want in the merged result. Pick one version or the other or create a hybrid. Also remove the conflict markers `<<<<<<`, `======` and `>>>>>>`.
+
+*Save, stage, commit, pull, and push the results*
+]
+---
+
+# Merge Conflicts
+
+Files with unresolved merge conflicts will show in RStudio like this
+
+```{r, echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/conflict.png")
+```
+
+You'll have to go through the file and manually deal with all of the conflicts. 
+
+RStudio has a "find all" option (shift + command + f on mac), I'll often use that and search for all instances of `HEAD`
+
+Once you've fixed everything, stage your files, `commit` > `pull` > `push`!
+
+The commit message should be informative in this case, explaining how you decided to resolve the merge conflict
+
+This seems tough, but it's important! 
+
+You don't want Git just making tough decisions for you
+
+
+---
+
+class: center, middle, inverse
+# Exercise:
+## Create and deal with a merge conflict
+
+
+---
+
+
+# Branching Out
+
+So far, we've focused on doing all of our work on the `main` branch
+  - `main` is the new convention, you'll still see `master` on many projects
+  
+This is a fine workflow when working solo / simple teams, but branches can become really helpful
+
+Think of a branch like a parallel universe for your code where you can try out new things without breaking the code that already works
+  - If it doesn't work out, just go back to your `main` branch
+  - If you like your changes, merge them back to `main`
+  
+---
+
+# Branching Out
+
+I use branches for
+  - Testing out a better way to do something that already works
+  - Large collaborative edits (e.g. papers in R Markdown)
+  
+RStudio has shortcuts for new branches, from command line
+
+`git checkout -b cool-new-idea`
+
+Will create a new branch called `cool-new-idea` and 'checkout' that branch (switch to it)
+
+You can also create branches directly on GitHub
+  - but don't forget to you'll need to `pull` to see that branch on your local machine
+  - And you'll have to switch to it (checkout)
+
+---
+
+
+# Pull Requests and Branches
+
+So far we've worked under the assumption that you are an administrator working on the main branch. Under these conditions you can just pull and push directly to GitHub and there isn't any "review" process
+
+Suppose though...
+  - You want to suggest changes to someone else's code
+  - You want to merge the changes you made on a branch back into your main branch
+  
+Enter the somewhat confusingly named "pull request"
+
+
+---
+
+# Pull Requests and Branches
+
+Think of a pull request as a more polite and formal `push`: 
+
+You are *requesting* that someone *pull* the changes you *pushed* into the repository
+
+GitHub helps facilitate this process 
+
+To resolve a pull request for a branch... 
+
+Once you've `comitted` > `pulled` > `pushed` changes to GitHub
+
+Go to the repo's GitHub page: If you have just pushed changes to a branch there will often be a button at the top saying "compare & pull request"
+
+You can also navigate to the "Pull Request" tab and start a new pull request there
+
+---
+
+# Pull Requests and Branches
+
+GitHub will then walk you through the process of generating and dealing with the pull request (if you have admin privileges )
+
+- Will check if the two branches can be merged automatically (lingo is to merge development branch into main branch)
+
+- Allows you to resolve any conflicts directly in GitHub (and will point them out to you)
+
+- Allows you to "squash" commits, for example deleting all of those commit messages that just said "some changes" and replacing them with a clear summary of what the changes in the branch did
+
+Once this is done, you submit the pull request, and if you have admin privilges you can then merge and close the pull request then and there. 
+
+It's easiest to delete the branch when you're done with it
+  - Otherwise need to get good at rebasing branches to for example keep using a branch called `dev`: A good thing to do but not always beginner friendly
+
+---
+
+class: center, middle, inverse
+# Exercise:
+## Create a branch, make changes to it, then merge back to main branch by a pull request
+
+
+---
+
+
+# Going Back in Time
+
+.pull-left[
+
+Think of Git as a full time-machine for your code!
+ 
+  - You can easily roll your code back to specific commits
+ 
+  - You can keep your changes (basically un-commit)
+ 
+  - Or discard your changes (roll back)
+  
+Clear commit messages make it very easy to go back to specific events
+  - Reset to commit "Model finally converges" is easier than "Some Changes"
+
+].pull-right[
+```{r, echo = FALSE}
+knitr::include_graphics("https://media.giphy.com/media/RmfhMeDyN0bVYBFKNR/giphy.gif")
+```
+
+
+]
+
+
+---
+
+
+# Going Back in Time
+.pull-left[
+You can revert back to previous commits from the command line. 
+
+Honestly, I use [GitKraken](https://www.gitkraken.com/) for these kinds of more complex operations
+
+  - If I need to go back in time it's because I've *royally* messed something up
+  
+  - The last thing I want to do at that point is try and remember all the git commands for reverting to a commit / how in the world to exit `vim`
+  
+Git can be hard! If your job isn't to be a software developer,it's OK to take shortcuts sometimes
+].pull-right[
+
+```{r echo = FALSE}
+knitr::include_graphics("http://www.reactiongifs.com/r/huge-tiny-.gif")
+```
+
+]
+---
+
+
+# Going Back in Time
+
+GitHub itself acts like a time capsule for your code. 
+
+You can navigate through the history of particular files on GitHub
+
+You can view the entire repo at a particular commit
+  - And then download it and start over as a sort of manual time machine if needed... 
+  
+You can also create "Releases". This is usually used for software development, e.g. v1.0
+
+But it's really handy for science too! 
+
+e.g. create versions at...
+1. Initial submission to journal
+2. Post-Major Revisions from Reviewer #2
+3. Published version
+
+All of which can be downloaded in total as needed!
+---
+
+# GitHub Issues
+
+You can do project management, sync up continuous integration for testing, host webpages, submit homework, and who all kinds of other stuff all on GitHub
+
+Issues are like as a to-do list stored in GitHub that can be explicitly linked to lines of code / commits / pull requests
+
+I use them to
+
+- Keep track of code-related tasks I need to do
+  - bugs that need fixing
+  - features I want to add
+- Assign tasks to collaborator
+- Home maintenance tasks in the Scheuerell household 🤓
+
+Fun feature, you can close issues directly from commit messages!
+
+`git commit -m "Fixed that bug. Closes #3"`
+
+When pushed will close Issue #3 on GitHub!
+
+---
+
+class: center, middle, inverse
+
+# Exercise: Create, assign, resolve, and close a GitHub issue
+---
+
+# In Summary....
+
+.pull-left[
+
+We just covered *a lot* of information
+  - There are entire courses / books etc. on this topic
+
+But remember, most science projects are simple relative to say managing the code behind Google Earth
+
+90% of the time...
+  - `commit`
+  - `pull`
+  - `push`
+
+With sprinkles of branches, pull requests and merge conflict resolution will do it
+
+].pull-right[
+
+
+```{r echo = FALSE}
+knitr::include_graphics("https://media.giphy.com/media/3o6gDSdED1B5wjC2Gc/giphy.gif")
+```
+
+
+]
+
+---
+
+# Git & GitHub: It's worth it
+
+This may also seem like a LOT of complex work compared to just throwing everything into Google Drive. 
+
+With a little bit of practice it gets easy though and it really pays off
+
+Project-oriented workflows + Git & GitHub...
+
+- Clearly keep track of the history of your project
+
+- Makes it easy to try new things without breaking your project
+
+- Allows you to easily and safely collaborate
+
+- Allows others (and yourself) to easily reproduce your results
+
+
+.center[*As science increasingly depends on software, <br> it's just the right thing to do*]
+
+---
+
+# Putting it All Together
+
+See `make-reprex.R` for an example of using a project-oriented workflow together with Git, GitHub, `renv` (a topic for another day) to allow for near automatic reproducibility of a project. 
+
+---
+
+# Resources
+
+.pull-left[[Happy Git and Github for the useR](https://happygitwithr.com/)
+
+[Oh Sh*t, Git!](https://ohshitgit.com/) 
+  
+  * [Dangit, Git!](https://dangitgit.com/) if you're so inclined
+
+[git documentation itself isn't bad](https://git-scm.com/docs/)
+
+Mark Scheurell's Lecture Materials on [GitHub](https://fish497.github.io/website/lectures/week_02/lec_04_intro_github.html) and [Git](https://fish497.github.io/website/lectures/week_02/lec_05_intro_git.html)
+
+[Oh My Git! (a Git learning game!)](https://blinry.itch.io/oh-my-git)
+
+Lee Qi's [intro to Git](https://super-advanced-r-fall-2019.github.io/git-and-github/presentations/git-and-github#1)
+]
+.pull-right[
+## Fun Resources
+
+[Commits From Last Night](http://www.commitlogsfromlastnight.com/)
+
+[git manual page generator](https://git-man-page-generator.lokaltog.net/)
+
+[starwars intro you commit history!](http://starlogs.net/#DanOvando/Global-Fishery-Potential)
+]
+---
+
+
+# Questions?
+
+.pull-left[
+Me: 
+
+email: danovan@uw.edu
+
+website: [danovando.com](https://www.weirdfishes.blog)
+
+twitter: [@danovand0](https://twitter.com/DanOvand0)
+] .pull-right[
+
+```{r}
+knitr::include_graphics("https://imgs.xkcd.com/comics/git.png")
+```
+
+]
+---
+

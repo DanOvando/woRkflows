@@ -1,0 +1,319 @@
+---
+title: "woRkflows"
+subtitle: "IATTC Scientific Lunch"
+author: "Dan Ovando"
+date: today
+format:
+  revealjs:
+    embed-resources: false
+    fig-align: center
+    auto-stretch: true
+    slide-number: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+library(here)
+
+theme_set(theme_minimal(base_size = 16))
+```
+
+
+# Science is all about reproducibility! <br> Why should it stop at our code?
+
+## The Platonic Project {.smaller}
+
+>This convention guarantees that the project can be moved around on your computer or onto other computers and will still “just work” -- Dr. Jenny Bryan
+
+1. All materials needed to reproduce results contained in or queried by code in single "container"
+
+2.  Results automatically updated as data / methods change
+
+3.  Version control software like Git + GitHub used to track changes and collaborate
+
+4.  Software versions tracked and stored with something like [`docker`](https://www.docker.com/) or [`renv`](https://rstudio.github.io/renv/articles/renv.html)
+
+5. Dependencies tracked and results updated by `makefile` for extra credit!
+
+Clearly not every project needs all of this, but good to keep in mind!
+
+Today we'll focus on just step 2 (automatic updateing) using [`quarto`](https://quarto.org/docs/guide/)
+
+## Project-Oriented Workflows
+
+Before we do fun stuff though, we have to talk about moving our science organization beyond the "Costanza wallet" method. 
+
+![](https://media.giphy.com/media/X2xRGTElqdfry/giphy.gif)
+
+
+
+## Does This Look Familiar?
+
+```{r, echo = FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+
+## What's Wrong With this? {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- Nothing if it's for your personal stuff!
+
+- Version control via file naming is not stable
+  - "ohhh, you used v5? Sorry the correct one is v2.3-FINAL
+  - No connection between state of code that generated results and results
+- No clear organization for other users to follow
+- **Google Drive / onedrive / whatever and Git + GitHub don't play nice together**
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+
+:::
+
+::::
+
+## Project-Oriented Workflows
+
+- All files needed to run your analysis in one folder
+  - Nested subfolders as needed
+  - **Does not have to be RStudio**
+
+- All analysis written assuming
+  - Fresh state
+  - Working directory set to project directory
+  
+## Project-Oriented Workflows
+see [Good Enough Practices in Scientific Computing](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510)
+
+![https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510](https://github.com/super-advanced-r-fall-2019/intro/raw/master/imgs/good-enough.png)
+
+
+## Ground Zero
+
+![](https://github.com/super-advanced-r-fall-2019/intro/raw/master/imgs/jbburn.png)
+- Dr. Jenny Bryan
+
+
+## What's wrong with `setwd`?
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+*Personal Needs*
+
+- Choice of IDE (RStudio, Sublime Text, scanning handwritten notes)
+
+- CaMel or snake_case
+  - But seriously, snake_case
+  - See [tidyverse style guide](https://style.tidyverse.org/)
+
+- Your lucky coding socks
+
+- **Where the code lives**
+
+:::
+
+:::{.column width="50%"}
+
+*Project Needs*
+  
+  - The data
+
+- Packages
+
+- Package versions
+
+- Custom functions
+
+- Scripts  to tie it all together
+
+:::
+  
+::::
+
+
+## Alternatives to `setwd` {.smaller}
+
+Using RStudio is a simple way around this
+  
+  - Creates .Rproj file in the root directory of your project
+
+Alternatively...
+ 
+  - Often just open a file in the project directory with R GUI/Atom/Whatever
+  
+  - If that fails, use `cd` / `setwd` from the command line/console (not in your script) when you open your analysis
+  
+
+Using project-oriented workflow means that once you're in the working directory, everything else should work
+
+**It's the user's, not the code's, responsibility to make sure the working directory is set correctly**
+
+
+## File Paths with `here`
+
+Will only work on one computer at one point in time
+
+```{r}
+#| eval: false
+#| error: true
+#| echo: true
+
+hake <- read.csv("c:/allMyprojects_FINALVersions/data\hake.csv")
+
+```
+
+. . . 
+
+Works on some machines...
+```{r}
+#| eval: false
+#| error: true
+#| echo: true
+
+hake <- read.csv("data\hake.csv")
+
+```
+
+. . . 
+
+Works on any platform and from anywhere in the project!
+```{r}
+#| error: true
+#| echo: true
+hake <- read.csv(here("data","hake.csv"))
+```
+
+# the point of all of this is to make your life easier
+
+. . . 
+
+I do this stuff because I'm lazy. 
+
+# Quarto
+
+## What's Quarto? {.smaller}
+
+[Quarto](https://quarto.org/) is "An open-source scientific and technical publishing system"
+
+- Basically the [heir](https://quarto.org/docs/faq/rmarkdown.html) to R Markdown + bookdown + distill etc
+
+- Write in markdown
+
+- Embed code "chunks"
+  - R, Python, Julia, Stan, lots more
+
+- "knit" to HTML, PDF, word, EPUB...
+
+- Automatic and dynamic figure and table numbering
+
+- Automatic reference formatting 
+
+- Visual editor!
+
+## Quarto {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**Pros**
+
+- No more copy and pasting figures!
+
+- Automatic references
+
+- Can be integrated into programmable workflows like `make`
+
+- Better collaboration. Really. 
+
+- Closes gap between text and code
+
+- I honestly find it easier to write in than Word. 
+
+
+:::
+
+::: {.column width="50%"}
+
+**Cons**
+
+- A bit of a learning curve
+
+- Has full support of Posit (*née* RStudio), but is evolving
+
+- When things go wrong, they can go very wrong
+
+- Collaboration less familiar (and clearly harder than onedrive + track changes)
+
+- Automating fine-scale formatting can be tricky
+
+:::
+
+::::
+
+
+## Git and GitHub better for editing!
+
+```{r}
+#| fig-align: "center"
+#| fig-width: 100
+knitr::include_graphics(here("presentations","imgs","phd101212s.png"))
+```
+
+## What About LaTeX?
+
+When you "knit" to PDF, your markdown is actually converted to LaTeX and then PDF. 
+
+You can choose to actually save the intermediate LaTeX file and there you go!
+
+You can also write LaTeX code directly into your quarto document, but note this may inhibit ability to knit to other formats. 
+
+LaTeX has a lot of strengths, but basically anything you can do in LaTeX you can do in quarto, with easier syntax and the full benefits of integrated code. 
+
+## Example Time
+
+OK, that's enough sales. 
+
+Once we have a project oriented workflow in place, we can turn our attention to actually using quarto. 
+
+Let's write up a quick assessment report based on our old friend Namibian hake
+
+## Example Time
+
+```{r}
+#| label: fig-hake
+#| fig-cap: "Abundance index and catch of namibian hake (at least that's what Andre claims)"
+dat <- read.csv(here::here("data", "hake.csv")) |>
+  janitor::clean_names() |>
+  pivot_longer(c(catch,
+               abundance_index),
+               names_to = "thing",
+               values_to = "value")
+
+dat |> 
+  ggplot(aes(year, value, color = thing)) + 
+  geom_point(size = 4, show.legend = FALSE) + 
+  facet_wrap(~thing, scales = "free_y") + 
+  scale_y_continuous(limits = c(0, NA))
+
+```
+
+## Until Next Time
+
+![](https://github.com/super-advanced-r-fall-2019/intro/raw/master/imgs/good_code.png)
+
