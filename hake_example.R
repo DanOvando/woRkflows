@@ -65,7 +65,8 @@ ref_points <- estimates |>
   group_by(param) |> 
   mutate(time_step = 1:length(param)) |> 
   ungroup() |> 
-  pivot_wider(names_from = param, values_from = estimate)
+  pivot_wider(names_from = param, values_from = estimate) |> 
+  filter(!is.na(u_umsy))
 
 
 index_fit_plot <- fitted_hake |>

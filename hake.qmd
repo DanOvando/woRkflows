@@ -1,0 +1,216 @@
+---
+title: "Namibian Hake Stock Assessment"
+author: Dan Ovando
+date: today
+format:
+  pdf: default
+  docx:
+    reference-doc: template.docx
+  html: default
+execute: 
+  echo: false
+  message: false
+bibliography: references.bib
+csl: nature.csl
+---
+
+## Introduction
+
+| Col1 | Col2 | Col3 |
+|------|------|------|
+|      |      |      |
+|      |      |      |
+|      |      |      |
+
+: Hello world
+
+This is a stock assessment for Namibian hake (*scientific name*).
+
+```{sql}
+
+
+
+```
+
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+library(here)
+
+library(TMB)
+
+hake <- read.csv(here("data","updated_hake.csv"))  |> 
+  janitor::clean_names() 
+
+theme_set(theme_minimal(base_size = 14))
+
+```
+
+The first year we have catch data is `r min(hake$year)`.
+
+See our data in @fig-data
+
+```{r}
+#| label: fig-data
+#| fig-cap: "Here are our data"
+
+
+
+hake |> pivot_longer(c(catch,
+                       abundance_index),
+                     names_to = "thing",
+                     values_to = "value") |>
+  ggplot(aes(year, value, color = thing)) +
+  geom_point(size = 4, show.legend = FALSE) +
+  facet_wrap(~ thing, scales = "free_y") +
+  scale_y_continuous(limits = c(0, NA))
+```
+
+## Methods
+
+Well science needs equations @eq-schaefer
+
+$$
+cpue = qB
+$$ {#eq-cpue}
+
+$$
+b_{t+1} = b_t \times (1 + r(1 + \frac{b_t}{K})) - c_t
+$$ {#eq-schaefer}
+
+### Our Model
+
+We are going to fit a state space model fitting to CPUE ignoring all practices in @hoyle2024
+
+```{r}
+#| include: false
+#| label: fit-model
+
+compile(here("src","hake.cpp"))               # Compile the C++ file
+
+dyn.load(dynlib(here("src","hake")))
+
+# on.exit(dyn.unload(here("src","hake")))
+
+
+model <-  MakeADFun(
+  data = list(
+    catches = hake$catch,
+    index = hake$abundance_index,
+    years = nrow(hake),
+    sigma_proc = 0.025,
+    sigma_catch = 0.05
+  ),
+  parameters = list(
+    log_r = log(0.2),
+    log_k = log(20 * max(hake$catch)),
+    log_index_q = log(0.001),
+    log_init_dep = log(1),
+    log_sigma_obs = log(0.5),
+    effish = rep(-2, nrow(hake)),
+    log_pros_error = rep(0, nrow(hake))
+  ),
+  random = "log_pros_error"
+)
+
+fit <- nlminb(model$par, model$fn, model$gr,control=list(iter.max=10000,eval.max=100000))
+
+fit
+
+sd_report <- sdreport(model)
+
+estimates <- summary(sd_report) |> 
+  as.data.frame() |> 
+  rownames_to_column(var = "param") |> 
+  janitor::clean_names()
+
+index_hat <- estimates |> 
+  filter(str_detect(param, "log_index_hat")) |> 
+  mutate(year = hake$year,
+         index_hat = exp(estimate),
+         upper_index_hat = exp(estimate + 1.96 * std_error),
+         lower_index_hat = exp(estimate - 1.96 * std_error)) |> 
+  select(year, index_hat, upper_index_hat, lower_index_hat)
+       
+
+
+fitted_hake <- hake |> 
+  left_join(index_hat, by = "year") 
+
+ref_points <- estimates |> 
+  filter(str_detect(param, "msy")) |> 
+  mutate(param = str_remove_all(param,"\\..*$")) |> 
+  select(param, estimate) |> 
+  group_by(param) |> 
+  mutate(time_step = 1:length(param)) |> 
+  ungroup() |> 
+  pivot_wider(names_from = param, values_from = estimate) |> 
+  filter(!is.na(u_umsy))
+
+
+```
+
+## Results
+
+Our model ran and we can be confident it is perfect becase `nlminb` says "`r fit$message`"
+
+Our model is amaing (@fig-fit)
+
+And the stock is doing great (@fig-kobe)
+
+```{r}
+#| label: fig-kobe
+#| fig-cap: "This is a kobe plot"
+
+kobe_plot <- ref_points |> 
+  ggplot(aes(b_bmsy, u_umsy, fill = time_step)) + 
+  geom_hline(yintercept = 1, linetype = 2) +
+  geom_vline(xintercept = 1, linetype = 2) +
+  geom_path() + 
+  geom_point(shape = 21, size = 4) + 
+  scale_fill_viridis_c() + 
+  scale_x_continuous(limits = c(0, NA), expand = expansion(c(0,.05))) + 
+  scale_y_continuous(limits = c(0, NA), expand = expansion(c(0,0.05)))
+
+kobe_plot
+
+```
+
+```{r}
+#| label: fig-fit
+#| fig-cap: "These are the fits to our data"
+
+index_fit_plot <- fitted_hake |>
+  ggplot() +
+  geom_point(aes(year, abundance_index), size = 4) +
+  geom_pointrange(
+    aes(year, index_hat, ymax = upper_index_hat, ymin = lower_index_hat),
+    color = "red",
+    alpha = 0.5
+  ) + 
+  scale_y_continuous(limits = c(0, NA))
+
+index_fit_plot
+
+
+```
+
+## Tables
+
+See @tbl-pars for estimates
+
+```{r}
+#| label: tbl-pars
+#| tbl-cap: "these are some parameters"
+
+
+knitr::kable(estimates[1:5,], digits = 2)
+
+
+```
+
+## References

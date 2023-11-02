@@ -2,6 +2,7 @@
 title: "woRkflows"
 subtitle: "IATTC Scientific Lunch"
 author: "Dan Ovando"
+logo: imgs/IATTC_logo.jpg
 date: today
 format:
   revealjs:
