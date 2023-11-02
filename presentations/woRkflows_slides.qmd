@@ -23,7 +23,8 @@ theme_set(theme_minimal(base_size = 16))
 ```
 
 
-# Science is all about reproducibility! <br> Why should it stop at our code?
+# Science is (in theory) about reproducibility. <br> Why should it stop at our code?
+
 
 ## The Platonic Project {.smaller}
 
@@ -50,40 +51,12 @@ Before we do fun stuff though, we have to talk about moving our science organiza
 ![](https://media.giphy.com/media/X2xRGTElqdfry/giphy.gif)
 
 
-
 ## Does This Look Familiar?
 
 ```{r, echo = FALSE}
 knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
 ```
 
-
-## What's Wrong With this? {.smaller}
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-- Nothing if it's for your personal stuff!
-
-- Version control via file naming is not stable
-  - "ohhh, you used v5? Sorry the correct one is v2.3-FINAL
-  - No connection between state of code that generated results and results
-- No clear organization for other users to follow
-- **Google Drive / onedrive / whatever and Git + GitHub don't play nice together**
-
-:::
-
-::: {.column width="50%"}
-
-```{r}
-knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
-```
-
-
-:::
-
-::::
 
 ## Project-Oriented Workflows
 
@@ -92,7 +65,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-wi
   - **Does not have to be RStudio**
 
 - All analysis written assuming
-  - Fresh state
+  - Fresh state (no libraries or data loaded)
   - Working directory set to project directory
   
 ## Project-Oriented Workflows
@@ -109,9 +82,9 @@ see [Good Enough Practices in Scientific Computing](https://journals.plos.org/pl
 
 ## What's wrong with `setwd`?
 
-::::{.columns}
+:::: {.columns}
 
-:::{.column width="50%"}
+::: {.column width="50%"}
 
 *Personal Needs*
 
@@ -127,7 +100,7 @@ see [Good Enough Practices in Scientific Computing](https://journals.plos.org/pl
 
 :::
 
-:::{.column width="50%"}
+::: {.column width="50%"}
 
 *Project Needs*
   
@@ -164,6 +137,8 @@ Using project-oriented workflow means that once you're in the working directory,
 **It's the user's, not the code's, responsibility to make sure the working directory is set correctly**
 
 
+
+
 ## File Paths with `here`
 
 Will only work on one computer at one point in time
@@ -197,6 +172,33 @@ Works on any platform and from anywhere in the project!
 #| echo: true
 hake <- read.csv(here("data","hake.csv"))
 ```
+
+## Brown M&Ms and Code {.smaller}
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+Van Halen required a bowl of M&Ms backstage but with all the brown M&Ms removed
+
+- Presence of brown M&Ms was a sign that bigger safety details might have been missed too^[So they claim, might have just been being annoying]
+
+Some of the "best practices" coding things we'll talk about can seem just as silly:
+
+*Poor coding practices can be a sign of bigger problems*
+
+:::
+
+::: {.column width="40%"}
+
+```{r}
+knitr::include_graphics("https://media.giphy.com/media/l4pTfrh1ElNzclZU4/giphy.gif")
+```
+
+:::
+
+::::
+
 
 # the point of all of this is to make your life easier
 
@@ -317,3 +319,31 @@ dat |>
 
 ![](https://github.com/super-advanced-r-fall-2019/intro/raw/master/imgs/good_code.png)
 
+# Extras
+
+## What's Wrong With this? {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- Nothing if it's for your personal stuff!
+
+- Version control via file naming is not stable
+  - "ohhh, you used v5? Sorry the correct one is v2.3-FINAL
+  - No connection between state of code that generated results and results
+- No clear organization for other users to follow
+- **Google Drive / onedrive / whatever and Git + GitHub don't play nice together**
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+knitr::include_graphics("https://raw.githubusercontent.com/OARS-SAFS/projects-with-github/main/presentations/imgs/oh-my.png")
+```
+
+
+:::
+
+::::
