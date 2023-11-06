@@ -26,12 +26,6 @@ csl: nature.csl
 
 This is a stock assessment for Namibian hake (*scientific name*).
 
-```{sql}
-
-
-
-```
-
 
 ```{r}
 #| label: setup
